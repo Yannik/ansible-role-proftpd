@@ -1,0 +1,1 @@
+proftpd_config_path: ../../../files/proftpd/{{ inventory_hostname }}/

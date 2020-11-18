@@ -1,0 +1,28 @@
+- name: Install proftpd
+  package: name=proftpd state=present
+  register: proftpd_package
+
+- name: Remove default proftpd config
+  shell: rm -rf /etc/proftpd/*
+  when: proftpd_package is changed
+
+- name: Install proftpd config files
+  template:
+    src: "{{ item }}"
+    dest: /etc/proftpd/
+    mode: 0600
+    owner: proftpd
+  with_items:
+    - proftpd.conf
+    - modules.conf
+    - tls.conf
+  notify: restart proftpd
+
+- name: Copy custom proftpd config files
+  copy:
+    src: "{{ proftpd_config_path }}"
+    dest: "/etc/proftpd/"
+    mode: 0600
+    owner: proftpd
+  notify: restart proftpd
+
