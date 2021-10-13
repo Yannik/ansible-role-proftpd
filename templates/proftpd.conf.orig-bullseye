@@ -1,3 +1,9 @@
+#
+# /etc/proftpd/proftpd.conf -- This is a basic ProFTPD configuration file.
+# To really apply changes, reload proftpd after modifications, if
+# it runs in daemon mode. It is not required in inetd/xinetd mode.
+#
+
 # Includes DSO modules
 Include /etc/proftpd/modules.conf
 
@@ -30,11 +36,11 @@ ListOptions "-l"
 DenyFilter \*.*/
 
 # Use this to jail all users in their homes 
-DefaultRoot ~
+# DefaultRoot~
 
 # Users require a valid shell listed in /etc/shells to login.
 # Use this directive to release that constrain.
-# RequireValidShell off
+# RequireValidShelloff
 
 # Port 21 is the standard FTP port.
 Port 21
@@ -134,6 +140,71 @@ AdminControlsEngine off
 #
 # This is used for FTPS connections
 #
-Include /etc/proftpd/tls.conf
+#Include /etc/proftpd/tls.conf
 
+#
+# This is used for SFTP connections
+#
+#Include /etc/proftpd/sftp.conf
+
+#
+# This is used for other add-on modules
+#
+#Include /etc/proftpd/dnsbl.conf
+#Include /etc/proftpd/geoip.conf
+#Include /etc/proftpd/snmp.conf
+
+#
+# Useful to keep VirtualHost/VirtualRoot directives separated
+#
+#Include /etc/proftpd/virtuals.conf
+
+# A basic anonymous configuration, no upload directories.
+
+# <Anonymous ~ftp>
+#   User ftp
+#   Group nogroup
+#   # We want clients to be able to login with "anonymous" as well as "ftp"
+#   UserAlias anonymous ftp
+#   # Cosmetic changes, all files belongs to ftp user
+#   DirFakeUser on ftp
+#   DirFakeGroup on ftp
+# 
+#   RequireValidShell off
+# 
+#   # Limit the maximum number of anonymous logins
+#   MaxClients 10
+# 
+#   # We want 'welcome.msg' displayed at login, and '.message' displayed
+#   # in each newly chdired directory.
+#   DisplayLogin welcome.msg
+#   DisplayChdir .message
+# 
+#   # Limit WRITE everywhere in the anonymous chroot
+#   <Directory *>
+#     <Limit WRITE>
+#       DenyAll
+#     </Limit>
+#   </Directory>
+# 
+#   # Uncomment this if you're brave.
+#   # <Directory incoming>
+#   #   # Umask 022 is a good standard umask to prevent new files and dirs
+#   #   # (second parm) from being group and world writable.
+#   #   Umask022  022
+#   #   <Limit READ WRITE>
+#   #     DenyAll
+#   #     </Limit>
+#   #       <Limit STOR>
+#   #         AllowAll
+#   #     </Limit>
+#   # </Directory>
+# 
+# </Anonymous>
+
+# Include other custom configuration files
+# !! Please note, that this statement will read /all/ file from this subdir,
+# i.e. backup files created by your editor, too !!!
+# Eventually create file patterns like this: /etc/proftpd/conf.d/*.conf
+# 
 Include /etc/proftpd/conf.d/

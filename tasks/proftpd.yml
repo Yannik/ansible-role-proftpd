@@ -1,11 +1,14 @@
 - name: Install proftpd
-  package: name=proftpd state=present
+  package:
+    name:
+      - proftpd
+      - proftpd-mod-crypto
   register: proftpd_package
 
-- name: Remove default proftpd config
-  shell: rm -rf /etc/proftpd/*
-  when: proftpd_package is changed
-
+#- name: Remove default proftpd config
+#  shell: rm -rf /etc/proftpd/*
+#  when: proftpd_package is changed
+#
 - name: Install proftpd config files
   template:
     src: "{{ item }}"
@@ -14,8 +17,15 @@
     owner: proftpd
   with_items:
     - proftpd.conf
-    - modules.conf
+    #- modules.conf
     - tls.conf
+  notify: restart proftpd
+
+- name: Enable tls module
+  lineinfile:
+    path: /etc/proftpd/modules.conf
+    line: LoadModule mod_tls.c
+    regex: '#?LoadModule mod_tls.c'
   notify: restart proftpd
 
 - name: Copy custom proftpd config files
