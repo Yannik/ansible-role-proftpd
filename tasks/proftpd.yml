@@ -2,8 +2,13 @@
   package:
     name:
       - proftpd
-      - proftpd-mod-crypto
   register: proftpd_package
+
+- name: Install proftpd-mod-crypto on debian >= 11
+  package:
+    name:
+      - proftpd-mod-crypto
+  when: ansible_distribution == "Debian" and ansible_distribution_major_version|int > 10
 
 #- name: Remove default proftpd config
 #  shell: rm -rf /etc/proftpd/*
